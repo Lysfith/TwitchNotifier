@@ -2,8 +2,9 @@
 {
     public class ConfigurationBot
     {
-        public string DiscordToken { get; set; }
-        public ulong DiscordChannelId { get; set; }
+        public string DiscordUrl { get; set; }
+        public string DiscordBotName { get; set; }
+        public string DiscordBotIconUrl { get; set; }
         public string TwitchClientId { get; set; }
         public string TwitchSecret { get; set; }
         public string GameName { get; set; }
