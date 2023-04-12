@@ -5,6 +5,7 @@
         public string DiscordUrl { get; set; }
         public string DiscordBotName { get; set; }
         public string DiscordBotIconUrl { get; set; }
+        public bool DiscordBotStartMessage { get; set; }
         public string TwitchClientId { get; set; }
         public string TwitchSecret { get; set; }
         public string GameName { get; set; }

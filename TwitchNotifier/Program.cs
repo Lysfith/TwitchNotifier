@@ -66,15 +66,18 @@ public class Program
 		}
 		else
 		{
-			try
+			if (_config.DiscordBotStartMessage)
 			{
-				await SendMessageStartedToDiscordAsync();
-			}
-			catch (Exception ex)
-			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine(ex.Message);
-				Console.ForegroundColor = ConsoleColor.White;
+				try
+				{
+					await SendMessageStartedToDiscordAsync();
+				}
+				catch (Exception ex)
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine(ex.Message);
+					Console.ForegroundColor = ConsoleColor.White;
+				}
 			}
 
 			_twitchBot = new TwitchBot(_config.TwitchClientId, _config.TwitchSecret, _config.GameName, _config.TimeBetweenCheck);
@@ -133,7 +136,7 @@ public class Program
 				new
 				{
 					title = stream.Title,
-					description = $"{stream.ViewerCount} viewers",
+					description = $"Viewers: {stream.ViewerCount} | Language: {stream.Language} | Mature: {(stream.IsMature ? "yes":"no")}",
 					author = new {
 						name = stream.UserName,
 						url = $"https://www.twitch.tv/{stream.UserName}",

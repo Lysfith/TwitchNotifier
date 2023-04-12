@@ -13,8 +13,6 @@ namespace TwitchNotifier
 
         private TwitchAPI _api;
         private string _gameName;
-        private List<string> _previousStreamIds;
-        private bool _firstPass;
         private int _timeBetweenCheck;
 
         public event Func<Stream, Task> OnNewStreamAsync;
@@ -22,8 +20,6 @@ namespace TwitchNotifier
         public TwitchBot(string clientId, string secret, string gameName, int timeBetweenCheck)
         {
             _gameName = gameName;
-            _previousStreamIds = new List<string>();
-            _firstPass = true;
             _timeBetweenCheck = timeBetweenCheck;
 
             _api = new TwitchAPI();
@@ -71,34 +67,35 @@ namespace TwitchNotifier
             var streams = await _api.Helix.Streams.GetStreamsAsync(gameIds: new List<string>()
             {
                 game.Id
-            }, accessToken: accessToken, first: STREAM_COUNT);
+            }, accessToken: accessToken, first: STREAM_COUNT, type: "live");
 
             return streams.Streams;
         }
 
         private async Task ProcessStreamsAsync(IEnumerable<Stream> streams)
         {
-            if (!_firstPass)
+            var lastStream = streams.OrderByDescending(s => s.StartedAt).FirstOrDefault();
+            if (lastStream != null)
             {
-                foreach (var stream in streams)
+                Console.WriteLine($"[{nameof(TwitchBot)}] Last stream started at: {lastStream.StartedAt.ToLocalTime()}");
+            }
+            var streamsStartedBetweenCheck = streams.Where(s =>
+                s.GameName == _gameName
+                && s.StartedAt > DateTime.UtcNow.AddSeconds(-_timeBetweenCheck))
+                .ToList();
+
+            foreach (var stream in streamsStartedBetweenCheck)
+            {
+                try
                 {
-                    if (!_previousStreamIds.Contains(stream.Id))
-                    {
-                        try
-                        {
-                            await OnNewStreamAsync(stream);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"[{nameof(TwitchBot)}] {ex.Message}");
-                        }
-                    }
+                    await OnNewStreamAsync(stream);
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[{nameof(TwitchBot)}] {ex.Message}");
                 }
             }
-
-            _firstPass = false;
-            _previousStreamIds = streams.Select(s => s.Id).ToList();
         }
     }
 }
