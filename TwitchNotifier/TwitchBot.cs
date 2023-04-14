@@ -11,6 +11,8 @@ namespace TwitchNotifier
     {
         private const int STREAM_COUNT = 100;
 
+        private List<StreamInfo> _streams;
+
         private TwitchAPI _api;
         private string _gameName;
         private int _timeBetweenCheck;
@@ -25,6 +27,8 @@ namespace TwitchNotifier
             _api = new TwitchAPI();
             _api.Settings.ClientId = clientId;
             _api.Settings.Secret = secret;
+
+            _streams = new List<StreamInfo>();
         }
 
         public async Task StartAsync()
@@ -33,10 +37,13 @@ namespace TwitchNotifier
             {
                 try
                 {
+                    Console.WriteLine($"==============================================");
                     var streams = await GetStreamsAsync(_gameName);
+                    Console.WriteLine($"[{nameof(TwitchBot)}] {streams.Count()} streams found");
+
                     await ProcessStreamsAsync(streams);
 
-                    Console.WriteLine($"[{nameof(TwitchBot)}] {streams.Count()} streams found");
+                    _streams.RemoveAll(s => s.StartedAt < DateTime.Now.AddDays(-2));
                 }
                 catch(Exception ex)
                 {
@@ -74,20 +81,24 @@ namespace TwitchNotifier
 
         private async Task ProcessStreamsAsync(IEnumerable<Stream> streams)
         {
-            var lastStream = streams.OrderByDescending(s => s.StartedAt).FirstOrDefault();
-            if (lastStream != null)
-            {
-                Console.WriteLine($"[{nameof(TwitchBot)}] Last stream started at: {lastStream.StartedAt.ToLocalTime()}");
-            }
-            var streamsStartedBetweenCheck = streams.Where(s =>
-                s.GameName == _gameName
-                && s.StartedAt > DateTime.UtcNow.AddSeconds(-_timeBetweenCheck))
+            var newStreams = streams
+                .Where(s => s.GameName == _gameName
+                    && !_streams.Any(d => d.Id == s.Id))
                 .ToList();
 
-            foreach (var stream in streamsStartedBetweenCheck)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"[{nameof(TwitchBot)}] {newStreams.Count()} new streams");
+            Console.ForegroundColor = ConsoleColor.White;
+
+            foreach (var stream in newStreams)
             {
                 try
                 {
+                    _streams.Add(new StreamInfo()
+                    {
+                        Id = stream.Id,
+                        StartedAt = stream.StartedAt
+                    });
                     await OnNewStreamAsync(stream);
                 }
                 catch (Exception ex)
@@ -97,5 +108,11 @@ namespace TwitchNotifier
                 }
             }
         }
+    }
+
+    public struct StreamInfo
+    {
+        public string Id { get; set; }
+        public DateTime StartedAt { get; set; }
     }
 }
