@@ -4,10 +4,11 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>disable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<Version>1.0.2.0</Version>
-		<AssemblyVersion>1.0.2.0</AssemblyVersion>
-		<FileVersion>1.0.2.0</FileVersion>
+		<Nullable>disable</Nullable>
+		<PublishSingleFile>true</PublishSingleFile>
+		<Version>1.0.3.0</Version>
+		<AssemblyVersion>1.0.3.0</AssemblyVersion>
+		<FileVersion>1.0.3.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
