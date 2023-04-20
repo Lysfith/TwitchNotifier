@@ -131,15 +131,18 @@ public class Program
 			username = _config.DiscordBotName,
 			avatar_url = _config.DiscordBotIconUrl,
 			content = $"**{stream.UserName}** start streaming **{stream.GameName}**",
+			tts = false,
 			embeds = new List<dynamic>()
 			{
 				new
 				{
+					type = "rich",
 					title = stream.Title,
 					description = $"Viewers: {stream.ViewerCount} | Language: {stream.Language} | Mature: {(stream.IsMature ? "yes":"no")}",
+					url = $"https://www.twitch.tv/{stream.UserLogin}",
 					author = new {
 						name = stream.UserName,
-						url = $"https://www.twitch.tv/{stream.UserName}",
+						url = $"https://www.twitch.tv/{stream.UserLogin}",
 						icon_url = "https://cdn.discordapp.com/embed/avatars/0.png"
 					},
 					timestamp = stream.StartedAt.ToString("o"),
