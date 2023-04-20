@@ -6,9 +6,9 @@
 		<ImplicitUsings>disable</ImplicitUsings>
 		<Nullable>disable</Nullable>
 		<PublishSingleFile>true</PublishSingleFile>
-		<Version>1.0.3.0</Version>
-		<AssemblyVersion>1.0.3.0</AssemblyVersion>
-		<FileVersion>1.0.3.0</FileVersion>
+		<Version>1.0.4.0</Version>
+		<AssemblyVersion>1.0.4.0</AssemblyVersion>
+		<FileVersion>1.0.4.0</FileVersion>
 		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
