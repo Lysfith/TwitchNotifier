@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +50,7 @@ public class Program
 
         IConfiguration config = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
-            .AddJsonFile("appsettings.local.json")
+            .AddJsonFile("appsettings.local.json", true)
             .Build();
 
         var discordConfig = new DiscordConfiguration();
@@ -74,81 +73,4 @@ public class Program
 
         _logger.Information("Config loaded!");
     }
-
-    //private async Task TwitchBot_OnNewStreamAsync(
-    //    TwitchLib.Api.Helix.Models.Streams.GetStreams.Stream stream
-    //)
-    //{
-    //    try
-    //    {
-    //        await SendMessageToDiscordAsync(stream);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.ForegroundColor = ConsoleColor.Red;
-    //        Console.WriteLine(ex.Message);
-    //        Console.ForegroundColor = ConsoleColor.White;
-    //    }
-    //}
-
-    //private async Task SendMessageToDiscordAsync(
-    //    TwitchLib.Api.Helix.Models.Streams.GetStreams.Stream stream
-    //)
-    //{
-    //    var request = new HttpRequestMessage(HttpMethod.Post, _config.DiscordUrl);
-
-    //    var image = stream.ThumbnailUrl.Replace("{width}", "440").Replace("{height}", "248");
-
-    //    request.Content = JsonContent.Create(
-    //        new
-    //        {
-    //            username = _config.DiscordBotName,
-    //            avatar_url = _config.DiscordBotIconUrl,
-    //            content = $"**{stream.UserName}** start streaming **{stream.GameName}**",
-    //            tts = false,
-    //            embeds = new List<dynamic>()
-    //            {
-    //                new
-    //                {
-    //                    type = "rich",
-    //                    title = stream.Title,
-    //                    description = $"Viewers: {stream.ViewerCount} | Language: {stream.Language} | Mature: {(stream.IsMature ? "yes" : "no")}",
-    //                    url = $"https://www.twitch.tv/{stream.UserLogin}",
-    //                    author = new
-    //                    {
-    //                        name = stream.UserName,
-    //                        url = $"https://www.twitch.tv/{stream.UserLogin}",
-    //                        icon_url = "https://cdn.discordapp.com/embed/avatars/0.png",
-    //                    },
-    //                    timestamp = stream.StartedAt.ToString("o"),
-    //                    image = new { url = image },
-    //                },
-    //            },
-    //        }
-    //    );
-
-    //    Console.WriteLine("Send message to Discord !");
-
-    //    using var _httpClient = new HttpClient();
-    //    await _httpClient.SendAsync(request);
-    //}
-
-    //private async Task SendMessageStartedToDiscordAsync()
-    //{
-    //    var request = new HttpRequestMessage(HttpMethod.Post, _config.DiscordUrl);
-
-    //    request.Content = JsonContent.Create(
-    //        new
-    //        {
-    //            username = _config.DiscordBotName,
-    //            avatar_url = _config.DiscordBotIconUrl,
-    //            content = $"Bot started for game **{_config.GameName}** !",
-    //        }
-    //    );
-
-    //    Console.WriteLine("Send message to Discord !");
-
-    //    using var _httpClient = new HttpClient();
-    //    await _httpClient.SendAsync(request);
-    //}
 }
